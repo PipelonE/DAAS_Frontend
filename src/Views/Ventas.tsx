@@ -1,22 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, StyleSheet, ScrollView, Alert } from 'react-native';
+import { View, Text, Button, StyleSheet, ScrollView } from 'react-native';
 import { DataTable } from 'react-native-paper';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { RootStackParamList } from '../../App';
 
-export default function Menu() {
+export default function Ventas() {
   const [productos, setProductos] = useState([]);
   const [totalCantidad, setTotalCantidad] = useState(0);
-  const [showTable, setShowTable] = useState(false);
+  const [showProductos, setShowProductos] = useState(false);
+
+  const [ventas, setVentas] = useState([]);
+  const [showVentas, setShowVentas] = useState(false);
 
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   useEffect(() => {
-    if (showTable) {
+    if (showProductos) {
       fetchProductos();
       fetchTotalCantidad();
     }
-  }, [showTable]);
+    if (showVentas) {
+      fetchVentas();
+    }
+  }, [showProductos, showVentas]);
 
   const fetchProductos = async () => {
     try {
@@ -38,15 +44,26 @@ export default function Menu() {
     }
   };
 
+  const fetchVentas = async () => {
+    try {
+      const response = await fetch('http://192.168.96.37:4000/ver_ventas');
+      const ventas = await response.json();
+      setVentas(ventas);
+    } catch (error) {
+      console.error('Error fetching ventas:', error);
+    }
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      {/* Productos en Inventario */}
       <Text style={styles.title}>Productos en Inventario</Text>
       <Button
-        title={showTable ? "Ocultar Productos" : "Mostrar Productos"}
-        onPress={() => setShowTable(!showTable)}
+        title={showProductos ? "Ocultar Productos" : "Mostrar Productos"}
+        onPress={() => setShowProductos(!showProductos)}
         color="#009929"
       />
-      {showTable && (
+      {showProductos && (
         <View style={styles.tableContainer}>
           <Text style={styles.total}>Total Cantidad: {totalCantidad}</Text>
           <DataTable>
@@ -69,6 +86,38 @@ export default function Menu() {
           </DataTable>
         </View>
       )}
+
+      {/* Detalles de Ventas */}
+      <Text style={styles.title}>Detalles de Ventas</Text>
+      <Button
+        title={showVentas ? "Ocultar Ventas" : "Mostrar Ventas"}
+        onPress={() => setShowVentas(!showVentas)}
+        color="#009929"
+      />
+      {showVentas && (
+        <View style={styles.tableContainer}>
+          <DataTable>
+            <DataTable.Header>
+              <DataTable.Title>ID Detalle Venta</DataTable.Title>
+              <DataTable.Title>Nombre Producto</DataTable.Title>
+              <DataTable.Title>Cantidad</DataTable.Title>
+              <DataTable.Title>Precio Unitario</DataTable.Title>
+              <DataTable.Title>Subtotal</DataTable.Title>
+              <DataTable.Title>Fecha Venta</DataTable.Title>
+            </DataTable.Header>
+            {ventas.map((venta: { id_detalle_venta: number; nombreProducto: string; cantidad: number; precio_unitario: number; subtotal: number; fecha_venta: string }) => (
+              <DataTable.Row key={venta.id_detalle_venta}>
+                <DataTable.Cell>{venta.id_detalle_venta}</DataTable.Cell>
+                <DataTable.Cell>{venta.nombreProducto}</DataTable.Cell>
+                <DataTable.Cell>{venta.cantidad}</DataTable.Cell>
+                <DataTable.Cell>{venta.precio_unitario}</DataTable.Cell>
+                <DataTable.Cell>{venta.subtotal}</DataTable.Cell>
+                <DataTable.Cell>{venta.fecha_venta}</DataTable.Cell>
+              </DataTable.Row>
+            ))}
+          </DataTable>
+        </View>
+      )}
     </ScrollView>
   );
 }
@@ -79,7 +128,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fcdc5cff',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingBottom: 20,
     padding: 20,
   },
   title: {

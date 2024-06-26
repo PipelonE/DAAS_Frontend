@@ -5,6 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Menu from './src/Views/Menu';
 import Compra_Producto from './src/Views/Compra_Producto';
 import Registrar_producto from './src/Views/Registrar_producto';
+import Ventas from './src/Views/Ventas';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 
@@ -14,6 +15,8 @@ export type RootStackParamList = {
   Compra_Producto: {estado: boolean};
   MainTabsAdmi: undefined;
   ProductStack: undefined;
+  Ventas: {estado: boolean};
+
 };
 
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -24,16 +27,17 @@ const ProductStack = () => (
     <Stack.Screen name="Menu" component={Menu}/>
     <Stack.Screen name="Compra_Producto" component={Compra_Producto}/>
     <Stack.Screen name="Registrar_producto" component={Registrar_producto}/>
+    <Stack.Screen name="Ventas" component={Ventas}/>
   </Stack.Navigator>
 );
 
 const MainTabsAdmi = () => (
   <Tab.Navigator
     screenOptions={{
-      tabBarActiveTintColor: '#05bcc1',
+      tabBarActiveTintColor: '#009929',
       tabBarInactiveTintColor: '#888',
       headerStyle: {
-        backgroundColor: '#05bcc1',
+        backgroundColor: '#009929',
       },
       headerTintColor: '#fff',
       headerTitleStyle: {
@@ -42,24 +46,13 @@ const MainTabsAdmi = () => (
     }}
   >
     <Tab.Screen
-      name="ProductStack"
-      component={ProductStack}
-      options={{
-        title: 'Productos',
-        tabBarLabel: 'Productos',
-        tabBarIcon: ({ color, size }) => (
-          <Icon name="cube-outline" color={color} size={size} />
-        ),
-      }}
-    />
-    <Tab.Screen
       name="Menu"
       component={Menu}
       options={{
-        title: 'Menu',
-        tabBarLabel: 'Menu',
+        title: 'Lista Productos',
+        tabBarLabel: 'Informe Inventario',
         tabBarIcon: ({ color, size }) => (
-          <Icon name="map-outline" color={color} size={size} />
+          <Icon name="paper-plane-outline" color={color} size={size} />
         ),
       }}
     />
@@ -70,7 +63,7 @@ const MainTabsAdmi = () => (
         title: 'Registrar producto',
         tabBarLabel: 'Registrar producto',
         tabBarIcon: ({ color, size }) => (
-          <Icon name="map-outline" color={color} size={size} />
+          <Icon name="cube-outline" color={color} size={size} />
         ),
       }}
     />
@@ -81,7 +74,18 @@ const MainTabsAdmi = () => (
         title: 'Compra de Producto',
         tabBarLabel: 'Compra de Producto',
         tabBarIcon: ({ color, size }) => (
-          <Icon name="map-outline" color={color} size={size} />
+          <Icon name="stats-chart-outline" color={color} size={size} />
+        ),
+      }}
+    />
+    <Tab.Screen
+      name="Ventas"
+      component={Ventas}
+      options={{
+        title: 'Ventas',
+        tabBarLabel: 'Ventas',
+        tabBarIcon: ({ color, size }) => (
+          <Icon name="cash-outline" color={color} size={size} />
         ),
       }}
     />
